@@ -12,7 +12,7 @@ if __name__ == '__main__':
     gpx = ElementTree.parse(inp_file).getroot()
     coords = []
     for point in gpx[1][4]:
-        coord = {'lat':float(point.get('lat')), 'lon':float(point.get('lon')), 'time':point[1].text, 'elevation':float(point[0].text)}
+        coord = {'lat': float(point.get('lat')), 'lon': float(point.get('lon')), 'time': point[1].text, 'elevation': float(point[0].text)}
         coords.append(coord)
     data = pd.DataFrame(coords)
     data.to_csv(out_file)
