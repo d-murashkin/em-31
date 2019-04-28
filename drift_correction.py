@@ -47,17 +47,44 @@ def estimate_drift(gps_data):
     drift['drift_rate'] = d_rate
     drift['d_time_sec'] = d_time_sec
     drift['d_angle'] = d_angle
+    drift['time'] = gps_data['time']
     return drift
 
 
+def correct_uniform_drift(df, start_index, end_index):
+    """ Uniform drift correction (without any additional GPS data available).
+        Start and end point must be located at the same place of the ice floe.
+    """
+    lat_start = df.lat[start_index]
+    lon_start = df.lon[start_index]
+    lat_end = df.lat[end_index]
+    lon_end = df.lon[end_index]
+    dt = df.timestamp - df.timestamp[start_index]
+    d_lat = (lat_end - lat_start) / (df.timestamp[end_index] - df.timestamp[start_index])
+    d_lon = (lon_end - lon_start) / (df.timestamp[end_index] - df.timestamp[start_index])
+    df['lat_corr'] = df.lat - d_lat * dt
+    df['lon_corr'] = df.lon - d_lon * dt
+    return True
+
+
 if __name__ == '__main__':
+    pass
+    '''
     inp_file_1 = ''
     inp_file_2 = ''
     inp_file = '/home/dm/work/data/tryoshnikov/EM/gps1/Track_2019-03-30 102146.gpx'
     gps_track = read_gpx(inp_file)
     drift = estimate_drift(gps_track)
     print(drift.head())
+#    from matplotlib import pyplot as plt
+#    plt.figure()
+#    plt.scatter(drift['d_lat'], drift['d_lon'])
+#    plt.show()
+    '''
+    inp_file = '/home/dm/work/data/tryoshnikov/EM/22apr/prepr/042213A.csv'
+    data = pd.read_csv(inp_file)
+    correct_uniform_drift(data, 0, len(data) - 1)
     from matplotlib import pyplot as plt
-    plt.figure()
-    plt.scatter(drift['d_lat'], drift['d_lon'])
+    plt.scatter(data.lat_corr, data.lon_corr)
+    plt.scatter(data.lat, data.lon)
     plt.show()
