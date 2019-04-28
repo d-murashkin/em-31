@@ -29,28 +29,29 @@ class IceFloe(object):
     def local2global(self, x, y, time=''):
         return True
     
-    def extend_zero_point_serie(self, data):
+    def extend_reference_point_serie(self, point_id, data):
         """ Extend the time and coordinates (lat, lon) of the zero point.
             Data is expected to be a pandas DataFrame with the following columns:
             lat, lon, time (UTC)
+            point_id can be either 'zero' or 'unit'
         """
         if 'lat' not in data.columns or 'lon' not in data.columns or 'time' not in data.columns:
             print('Input data is expected to contain the following columns: "lat", "lon", "time".')
             print('The input data has the following columns: {0}'.format(data.columns))
             return False
         if data.shape[1] >= 3:
-            data_new = pd.DataFrame([data.lat, data.lon, data.time])
+            data_new = data.filter(items=['lat', 'lon', 'time'])
         else:
             data_new = data
-        self.zero_point = pd.concat([self.zero_point, data_new])
+        if point_id.lower() == 'zero':
+            self.zero_point = pd.concat([self.zero_point, data_new], ignore_index=True)
+        elif point_id.lower() == 'unit':
+            self.unit_point = pd.concat([self.unit_point, data_new], ignore_index=True)
+        else:
+            print('Wrong point_id. Possible values are "zero", "unit". Given value is {0}'.format(point_id))
+            return False
         return True
     
-    def extend_unit_point_serie(data):
-        """ Extend the time and coordinates (lat, lon) of the zero point.
-            Data is expected to be a pandas DataFrame with the following columns:
-            lat, lon, time (UTC)
-        """
-
 
 if __name__ == '__main__':
     pass
