@@ -91,7 +91,10 @@ if __name__ == '__main__':
     except:
         print('Input is expected to be a *.csv file. Could not read the input file.')
         sys.exit()
-    correct_uniform_drift(data, start_index=args.start, end_index=args.end)
+    ret = correct_uniform_drift(data, start_index=args.start, end_index=args.end)
+    if not ret:
+        print('Something went wrong during the correction. Check messages above.')
+        sys.exit()
 
     if not args.o:
         print('Output file is not specified, results are not saved.')
@@ -102,8 +105,12 @@ if __name__ == '__main__':
         sys.exit()
 
     from matplotlib import pyplot as plt
-    plt.scatter(data.lat_corr, data.lon_corr)
-    plt.scatter(data.lat, data.lon)
+    plt.scatter(data.lon, data.lat)
+    plt.scatter(data.lon_corr, data.lat_corr)
+    plt.title('Results of the drift correction.')
+    plt.xlabel('Longitude, deg')
+    plt.ylabel('Latitude, deg')
+    plt.legend(['Measured track', 'Corrected track'])
     plt.colorbar()
     if args.savefig:
         plt.savefig(args.savefig)
