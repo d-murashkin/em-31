@@ -67,7 +67,18 @@ def correct_uniform_drift(df, start_index=0, end_index=None):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='')
+    desc = """Apply uniform drift correction.
+              Choose two points of the track, where location on an ice floe is the same.
+              Based on these points the drift rate is estimated assuming its uniform.
+              Arguments:
+                -i input    data file
+                -o output   data file (optional)
+                -savefig    path to the figure with the result (optional)
+                -showfig    if specified the figure with the result is shown
+                -start      id of the starting point, default is 0
+                -end        id of the end point, default is the last point of the track
+           """
+    parser = argparse.ArgumentParser(description=desc)
     parser.add_argument('-i', help='input data file')
     parser.add_argument('-o', help='output data file')
     parser.add_argument('-savefig', help='save figure of the result')
@@ -75,6 +86,7 @@ if __name__ == '__main__':
     parser.add_argument('-start', help='id of the starting point, default is 0')
     parser.add_argument('-end', help='id of the end point, default is the last point in the data')
     args = parser.parse_args()
+
     """ Check mandatory arguments """
     if not args.i:
         print('Specify input file with -i option.')

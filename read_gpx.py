@@ -24,6 +24,8 @@ if __name__ == '__main__':
     parser.add_argument('-i', help='input filename')
     parser.add_argument('-o', help='output filename')
     args = parser.parse_args()
+
+    """ Check mandatory arguments """
     if not args.i:
         print('Please, specify input file with -i option.')
         sys.exit()

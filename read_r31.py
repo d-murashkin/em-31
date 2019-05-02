@@ -61,13 +61,16 @@ if __name__ == '__main__':
     parser.add_argument('-o', help='output filename')
     parser.add_argument('-d', help='date in the format %Y%m%d.')
     args = parser.parse_args()
+
+    """ Check mandatory arguments """
     if not args.o:
         print('Please, specify output file with -o option.')
         sys.exit()
     if not args.i:
         print('Please, specify input file with -i option.')
         sys.exit()
-    
+
+    """ Set optional arguments """
     if args.d:
         data = read_r31(args.i, args.d)
     else:

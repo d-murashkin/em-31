@@ -9,6 +9,7 @@ import pandas as pd
 
 def estimate_height(df, calibration_csv, em_height):
     """ Function estimates hight of the EM device above the water-ice interface.
+        Exponential fit for calibration data is used.
         *calibration* is expected to be a *.csv file with the following coluns:
         'height' and 'value' for calibration points, and 'ice_thickness' with some contact measurements of sea ice thickness.
         *em_height* is the height if the EM device above the snow surface.
@@ -46,7 +47,16 @@ def estimate_height(df, calibration_csv, em_height):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='')
+    desc = """ Script calculates sum of snow and ice thickness for data collected with EM device.
+               Exponential fit for calibration data is used.
+               Arguments:
+               -i           input file
+               -o           output file
+               -cal         calibration csv file
+               -em_height   height of the EM device above the snow surface
+            All the arguments above should be specified.
+           """
+    parser = argparse.ArgumentParser(description=desc)
     parser.add_argument('-i', help='Input file name.')
     parser.add_argument('-o', help='Output file name.')
     parser.add_argument('-cal', help='Calibration csv file.')
