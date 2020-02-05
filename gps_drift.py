@@ -1,5 +1,7 @@
 
 """ Drift correction with additional GPS trackers.
+    Since distance between GPS trackers does not change, it can be used to improve position error (to be implemented).
+    Two or more tracks gives opportunity to filter out outlying point of GPS track (to be implemented).
 """
 import numpy as np
 import pandas as pd
@@ -73,24 +75,23 @@ def read_track(track_file):
     return track
 
 
-def modify_tracks(track_1, track_2):
-    """ Function for track correction.
-        The distance between GPS trackers does not change during the measurement time.
-        Therefore both tracks can be smoothened decreasing the coordinate error.
-    """
-    pass
-
-
-def filter_outliers(track):
-    pass
-
-
 def __detect_time(x):
     return pd.datetime.strptime(x, '%Y-%m-%dT%H:%M:%SZ')
 
 
-def __new_point(t):
-    pass
+def calculate_drift(tracks, zero_time):
+    """ Calculate drift for every timepoint from tracks.
+        The drift is calculated relativly to the zero_time (time of zero drift).
+        *tracks* is expected to be a pandas dataframe.
+        *zero_time* should be datetime.datetime / pandas.datetime or similar data type.
+    """
+    """ Check input data type """
+    if type(tracks) is not pd.DataFrame:
+        print("Input data is expected to be a pandas DataFrame.")
+        return False
+    if type(zero_time) is not pd.datetime:
+        print("zero_time is expected to be a datetime.datetime or pandas.datetime type.")
+        return False
 
 
 if __name__ == '__main__':
@@ -99,26 +100,12 @@ if __name__ == '__main__':
     inp_file_1 = 'gps_1_orange.csv'
     inp_file_2 = 'gps_2_blue.csv'
     inp_file_3 = 'gps_3_yellow.csv'
-#    gps_track = pd.read_csv(inp_fld + inp_file_1)
-#    drift = estimate_drift(gps_track)
-#    print(drift.head())
     track = interpolate_tracks([inp_fld + inp_file_1, inp_fld + inp_file_2])
     print(track.columns)
+
     from matplotlib import pyplot as plt
     plt.figure()
     plt.plot(track[(1, 'lon')], track[(1, 'lat')], color='orange')
     plt.plot(track[(2, 'lon')], track[(2, 'lat')], color='blue')
     plt.plot((track[(1, 'lon')] + track[(2, 'lon')]) / 2., (track[(1, 'lat')] + track[(2, 'lat')]) / 2., color='green')
     plt.show()
-
-    '''
-    start_time = max(track_1.time[0], track_2.time[0])
-    end_time = min(track_1.time[track_1.shape[0] - 1], track_2.time[track_2.shape[0] - 1])
-    track_1 = track_1.between_time(start_time.time(), end_time.time())
-    track_2 = track_2.between_time(start_time.time(), end_time.time())
-    extention_2 = [__new_point(t, track_2) for t in track_1.time if t not in track_2.time]
-    for t in track_1.time:
-        if t in track_2.time:
-            continue
-        extention_2.append([t, 90, 360])
-    '''
